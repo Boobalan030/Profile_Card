@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Profile Card</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --border-color: #e0e0e0;
+            --white: #ffffff;
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+            
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+          
+        }
+        
+        .card-wrapper {
+            width: 100%;
+            max-width: 320px;
+            height: 420px;
+            position: relative;
+            margin: 0 auto;
+            
+        }
+
+        .card-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            perspective: 1000px;
+            
+            
+        }
+
+        .profile-card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-origin: center center;
+            
+            
+        }
+
+        .profile-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            background: var(--white);
+            
+        }
+
+        /* Front Face */
+        .card-front {
+            background: linear-gradient(135deg, var(--white) 0%, #f5f5f5 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .profile-header {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--primary-color);
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+        }
+
+
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+            }
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .profile-title {
+            font-size: 14px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .profile-bio {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .flip-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            z-index: 10;
+        }
+
+        .flip-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Back Face */
+        .card-back {
+            background: var(--white);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-title {
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            background: var(--white);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* About Tab */
+        .about-content h4 {
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .about-content p {
+            color: var(--text-light);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .info-item i {
+            color: var(--primary-color);
+            width: 20px;
+        }
+
+        /* Skills Tab */
+        .skills-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .skill-item {
+            background: var(--bg-light);
+            padding: 10px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .skill-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateX(5px);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .skill-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .skill-level {
+            font-size: 11px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .skill-bar {
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        /* Projects Tab */
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .project-item {
+            background: var(--bg-light);
+            border-radius: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .project-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-image-container {
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .project-item:hover .project-image {
+            transform: scale(1.05);
+        }
+
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.7) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .project-item:hover .project-overlay {
+            opacity: 1;
+        }
+
+        .project-content {
+            padding: 12px;
+        }
+
+        .project-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .project-desc {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 3px 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border-radius: 12px;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .project-btn {
+            flex: 1;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .demo-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+        }
+
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .source-btn {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .source-btn:hover {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+        }
+
+        /* Contact Tab */
+        .contact-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .contact-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .contact-value {
+            font-size: 13px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        
+        /* Extra Small Devices (Portrait Phones) */
+        @media (max-width: 575.98px) {
+            .card-wrapper {
+                max-width: 280px;
+                height: 380px;
+            }
+            
+            .card-front {
+                padding: 20px 15px;
+            }
+            
+            .profile-image {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .profile-name {
+                font-size: 20px;
+            }
+            
+            .profile-title {
+                font-size: 12px;
+            }
+            
+            .profile-bio {
+                font-size: 11px;
+            }
+            
+            .social-links {
+                gap: 10px;
+            }
+            
+            .social-link {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .flip-btn {
+                width: 40px;
+                height: 40px;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .tab-btn {
+                padding: 10px 5px;
+                font-size: 10px;
+            }
+            
+            .tab-btn i {
+                font-size: 16px;
+            }
+            
+            .tab-content {
+                padding: 15px;
+            }
+            
+            .about-content h4 {
+                font-size: 14px;
+            }
+            
+            .about-content p {
+                font-size: 11px;
+            }
+            
+            .info-item {
+                font-size: 11px;
+            }
+            
+            .skill-name {
+                font-size: 11px;
+            }
+            
+            .skill-level {
+                font-size: 10px;
+            }
+            
+            .project-title {
+                font-size: 12px;
+            }
+            
+            .project-desc {
+                font-size: 11px;
+            }
+            
+            .project-image-container {
+                height: 100px;
+            }
+            
+            .contact-value {
+                font-size: 11px;
+            }
+        }
+        
+        /* Small Devices (Landscape Phones) */
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            .card-wrapper {
+                max-width: 300px;
+                height: 400px;
+            }
+        }
+        
+        /* Medium Devices (Tablets) */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .card-wrapper {
+                max-width: 340px;
+                height: 440px;
+            }
+            
+            .profile-name {
+                font-size: 26px;
+            }
+            
+            .profile-title {
+                font-size: 15px;
+            }
+            
+            .profile-bio {
+                font-size: 14px;
+            }
+            
+            .project-image-container {
+                height: 140px;
+            }
+        }
+        
+        /* Large Devices (Desktops) */
+        @media (min-width: 992px) and (max-width: 1199.98px) {
+            .card-wrapper {
+                max-width: 360px;
+                height: 460px;
+            }
+            
+            .profile-name {
+                font-size: 28px;
+            }
+            
+            .profile-title {
+                font-size: 16px;
+            }
+            
+            .profile-bio {
+                font-size: 15px;
+            }
+            
+            .project-image-container {
+                height: 150px;
+            }
+        }
+        
+        /* Extra Large Devices (Large Desktops) */
+        @media (min-width: 1200px) {
+            .card-wrapper {
+                max-width: 380px;
+                height: 480px;
+            }
+            
+            .profile-name {
+                font-size: 30px;
+            }
+            
+            .profile-title {
+                font-size: 17px;
+            }
+            
+            .profile-bio {
+                font-size: 16px;
+            }
+            
+            .social-links {
+                gap: 18px;
+            }
+            
+            .social-link {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .flip-btn {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .project-image-container {
+                height: 160px;
+            }
+        }
+        
+        /* Landscape orientation adjustments */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            
+            .card-wrapper {
+                max-width: 500px;
+                height: 300px;
+            }
+            
+            .card-front {
+                flex-direction: row;
+                padding: 20px;
+                align-items: center;
+            }
+            
+            .profile-header {
+                margin-right: 20px;
+                margin-bottom: 0;
+            }
+            
+            .profile-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .status-indicator {
+                width: 18px;
+                height: 18px;
+                bottom: 2px;
+                right: 2px;
+            }
+            
+            .profile-info {
+                flex: 1;
+                text-align: left;
+            }
+            
+            .profile-name {
+                font-size: 18px;
+            }
+            
+            .profile-title {
+                font-size: 12px;
+            }
+            
+            .profile-bio {
+                font-size: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .social-links {
+                position: absolute;
+                bottom: 15px;
+                left: 20px;
+                gap: 10px;
+            }
+            
+            .social-link {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .flip-btn {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .tab-btn {
+                padding: 8px 5px;
+                font-size: 10px;
+            }
+            
+            .tab-btn i {
+                font-size: 14px;
+            }
+            
+            .tab-content {
+                padding: 10px;
+            }
+            
+            .project-image-container {
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-wrapper">
+        <div class="card-container">
+            <div class="profile-card" id="profileCard">
+                <!-- Front Face -->
+                <div class="card-face card-front">
+                    <div class="profile-header">
+                        <img src="https://i.pinimg.com/736x/6c/fa/ca/6cfacae7c62ab9327f4726d739448e8a.jpg" alt="Profile" class="profile-image">
+                        <div class="status-indicator"></div>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <h2 class="profile-name">Boobalan</h2>
+                        <p class="profile-title">Front-end Developer</p>
+                        
+                        <p class="profile-bio">
+                            Passionate about creating beautiful and functional digital experiences. 
+                            3+ years of experience in product design.
+                        </p>
+                    </div>
+                    
+                    <div class="social-links">
+                        
+                        <a href="https://www.facebook.com/palaniappan.palaniappan.10004694" class="social-link" target="_blank">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://github.com/Boobalan030" class="social-link" target="_blank">
+                            <i class="bi bi-github"></i>
+                        </a>
+                        <a href="https://mail.google.com/mail/u/0/#inbox" class="social-link">
+                            <i class="bi bi-envelope"></i>
+                        </a>
+                        <a href="https://www.instagram.com/boobalan_yt/?next=%2F&hl=en" class="social-link">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                    </div>
+                    
+                    <button class="flip-btn" onclick="flipCard(event)">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Back Face -->
+                <div class="card-face card-back">
+                    <div class="back-header">
+                        <span class="back-title">More Details</span>
+                        <button class="close-btn" onclick="flipCard(event)">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="tabs-container">
+                        <button class="tab-btn active" onclick="switchTab('about', this, event)">
+                            <i class="bi bi-person"></i>
+                            <span>About</span>
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('skills', this, event)">
+                            <i class="bi bi-star"></i>
+                            <span>Skills</span>
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('projects', this, event)">
+                            <i class="bi bi-folder"></i>
+                            <span>Projects</span>
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('contact', this, event)">
+                            <i class="bi bi-envelope"></i>
+                            <span>Contact</span>
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <!-- About Tab -->
+                        <div id="about" class="tab-pane active">
+                            <div class="about-content">
+                                <h4>About Me</h4>
+                                <p>
+                                    I'm a creative Front-end Developer with a passion for crafting intuitive digital experiences. 
+                                    I specialize in user-centered design and have worked with startups and Fortune 3 companies.
+                                </p>
+                                
+                                <div class="info-item">
+                                    <i class="bi bi-geo-alt"></i>
+                                    <span>Coimbatore, Tamil nadu</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-briefcase"></i>
+                                    <span>3+ Years Experience</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-mortarboard"></i>
+                                    <span>BSC in Computer science</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-translate"></i>
+                                    <span>English, Tamil</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Skills Tab -->
+                        <div id="skills" class="tab-pane">
+                            <div class="skills-grid">
+                                <div class="skill-item">
+                                    <div class="skill-header">
+                                        <span class="skill-name">Html, Css</span>
+                                        <span class="skill-level">95%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item">
+                                    <div class="skill-header">
+                                        <span class="skill-name">Java Script</span>
+                                        <span class="skill-level">88%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 88%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item">
+                                    <div class="skill-header">
+                                        <span class="skill-name">bootstrap</span>
+                                        <span class="skill-level">92%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item">
+                                    <div class="skill-header">
+                                        <span class="skill-name">React.js</span>
+                                        <span class="skill-level">86%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 96%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-item">
+                                    <div class="skill-header">
+                                        <span class="skill-name">Node.js</span>
+                                        <span class="skill-level">70%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Projects Tab -->
+                        <div id="projects" class="tab-pane">
+                            <div class="project-list">
+                                <div class="project-item">
+                                    <div class="project-image-container">
+                                        <img src="https://gimgs2.nohat.cc/thumb/f/640/palette-calculator-and-bow-on-red-background-free-photo--f8789a50d64f4c2b8d2a.jpg" alt="E-Commerce Project" class="project-image">
+                                        <div class="project-overlay">
+                                            <span style="color: white; font-size: 12px; font-weight: 500;">View Details</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-content">
+                                        <div class="project-title">Calculator App</div>
+                                        <div class="project-desc">A Calculator is a device that performs mathematical calculations, allowing users to input numbers and operations to quickly receive results on a screen.</div>
+                                        <div class="project-tags">
+                                            <span class="tag">html/Css</span>
+                                            <span class="tag">Java Script</span>
+                                            <span class="tag">Bootstrap</span>
+                                        </div>
+                                        <div class="project-actions">
+                                            <a href="https://boobalan030.github.io/-calculatorapp/" class="project-btn demo-btn" target="_blank">
+                                                <i class="bi bi-play-circle"></i>
+                                                Demo
+                                            </a>
+                                            <a href="https://github.com/Boobalan030/-calculatorapp" class="project-btn source-btn" target="_blank">
+                                                <i class="bi bi-code-slash"></i>
+                                                Source
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="project-item">
+                                    <div class="project-image-container">
+                                        <img src="https://img.freepik.com/free-photo/view-3d-dice-with-abstract-scenery_23-2151045373.jpg?semt=ais_incoming&w=740&q=80" alt="Banking App" class="project-image">
+                                        <div class="project-overlay">
+                                            <span style="color: white; font-size: 12px; font-weight: 500;">View Details</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-content">
+                                        <div class="project-title">FruitCatcher Game</div>
+                                        <div class="project-desc">A game is a structured, rule-based activity where participants (players) make choices to achieve a goal, often with quantifiable outcomes and beautiful animations.</div>
+                                        <div class="project-tags">
+                                            <span class="tag">html/Css</span>
+                                            <span class="tag">Java Script</span>
+                                            <span class="tag">Bootstrap</span>
+                                        </div>
+                                        <div class="project-actions">
+                                            <a href="https://boobalan030.github.io/FruitCatchergame/FruitCatcher.html" class="project-btn demo-btn" target="_blank">
+                                                <i class="bi bi-play-circle"></i>
+                                                Demo
+                                            </a>
+                                            <a href="https://github.com/Boobalan030/FruitCatchergame" class="project-btn source-btn" target="_blank">
+                                                <i class="bi bi-code-slash"></i>
+                                                Source
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="project-item">
+                                    <div class="project-image-container">
+                                        <img src="https://img.freepik.com/premium-vector/qr-code-concept-illustration_114360-5583.jpg?semt=ais_hybrid&w=740&q=80" alt="Healthcare Dashboard" class="project-image">
+                                        <div class="project-overlay">
+                                            <span style="color: white; font-size: 12px; font-weight: 500;">View Details</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-content">
+                                        <div class="project-title">QR-Code Generator</div>
+                                        <div class="project-desc">An advanced tool that allows you to create an unlimited number of static and dynamic QR codes with a logo. It offers options for businesses to track scanning data.</div>
+                                        <div class="project-tags">
+                                            <span class="tag">Html/CSS3</span>
+                                            <span class="tag">API</span>
+                                            <span class="tag">JavaScript</span>
+                                        </div>
+                                        <div class="project-actions">
+                                            <a href="https://boobalan030.github.io/QRCode-GeneratorPro/QRcode-generater.html" class="project-btn demo-btn" target="_blank">
+                                                <i class="bi bi-play-circle"></i>
+                                                Demo
+                                            </a>
+                                            <a href="https://github.com/Boobalan030/QRCode-GeneratorPro" class="project-btn source-btn" target="_blank">
+                                                <i class="bi bi-code-slash"></i>
+                                                Source
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="project-item">
+                                    <div class="project-image-container">
+                                        <img src="https://images.stockcake.com/public/8/2/5/8257784c-80e4-40b7-bdf4-d01c08e92dbb_large/electronics-store-aisle-stockcake.jpg" alt="SaaS Platform" class="project-image">
+                                        <div class="project-overlay">
+                                            <span style="color: white; font-size: 12px; font-weight: 500;">View Details</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-content">
+                                        <div class="project-title">E-Commerce_Website</div>
+                                        <div class="project-desc">Shop the world from your home.</div>
+                                        <div class="project-tags">
+                                            <span class="tag">Html/CSS3</span>
+                                            <span class="tag">Bootstrap</span>
+                                            <span class="tag">JavaScript</span>
+                                        </div>
+                                        <div class="project-actions">
+                                            <a href="https://boobalan030.github.io/E-commerce_website/" class="project-btn demo-btn" target="_blank">
+                                                <i class="bi bi-play-circle"></i>
+                                                Demo
+                                            </a>
+                                            <a href="https://github.com/Boobalan030/E-commerce_website" class="project-btn source-btn" target="_blank">
+                                                <i class="bi bi-code-slash"></i>
+                                                Source
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contact Tab -->
+                        <div id="contact" class="tab-pane">
+                            <div class="contact-grid">
+                                <a href="mailto:alex@example.com" class="contact-item">
+                                    <div class="contact-icon">
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                    <div class="contact-info">
+                                        <div class="contact-label">Email</div>
+                                        <div class="contact-value">boobalan9669@gmail.com</div>
+                                    </div>
+                                </a>
+                                
+                                <a href="tel:+1234567890" class="contact-item">
+                                    <div class="contact-icon">
+                                        <i class="bi bi-telephone"></i>
+                                    </div>
+                                    <div class="contact-info">
+                                        <div class="contact-label">Phone</div>
+                                        <div class="contact-value">+91 - 9790056206</div>
+                                    </div>
+                                </a>
+                                
+                                <a href="https://boobalan030.github.io/myportfolio-website/" class="contact-item" target="_blank">
+                                    <div class="contact-icon">
+                                        <i class="bi bi-globe"></i>
+                                    </div>
+                                    <div class="contact-info">
+                                        <div class="contact-label">Website</div>
+                                        <div class="contact-value">https://boobalan030.github.io/myportfolio-website/</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Flip card function
+        function flipCard(event) {
+            // Prevent event bubbling
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            const card = document.getElementById('profileCard');
+            card.classList.toggle('flipped');
+            
+            // Animate skill bars when skills tab is shown
+            if (card.classList.contains('flipped')) {
+                setTimeout(() => {
+                    const activeTab = document.querySelector('.tab-pane.active');
+                    if (activeTab && activeTab.id === 'skills') {
+                        animateSkillBars();
+                    }
+                }, 800);
+            }
+        }
+
+        // Switch tabs function
+        function switchTab(tabName, element, event) {
+            // Prevent event bubbling
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            // Remove active class from all tabs and panes
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab and corresponding pane
+            element.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Animate skill bars if skills tab is selected
+            if (tabName === 'skills') {
+                animateSkillBars();
+            }
+        }
+
+        // Animate skill bars
+        function animateSkillBars() {
+            const skillBars = document.querySelectorAll('.skill-progress');
+            skillBars.forEach((bar, index) => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100 * index);
+            });
+        }
+
+        // Open demo function
+        function openDemo(event, url) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Create a notification instead of alert
+            showNotification('Opening demo in a new window...');
+            
+            // In a real application, this would open the demo URL
+            // window.open(url, '_blank');
+            
+            // For demonstration purposes, we'll just log it
+            console.log('Opening demo:', url);
+        }
+
+        // Open source function
+        function openSource(event, url) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Create a notification instead of alert
+            showNotification('Opening source code in a new window...');
+            
+            // In a real application, this would open the source URL
+            // window.open(url, '_blank');
+            
+            // For demonstration purposes, we'll just log it
+            console.log('Opening source:', url);
+        }
+
+        // Show notification function
+        function showNotification(message) {
+            // Remove any existing notification
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                color: white;
+                padding: 12px 20px;
+                border-radius: 30px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                font-size: 14px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            
+            // Add to body
+            document.body.appendChild(notification);
+            
+            // Fade in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+            }, 10);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+
+        // Add click animation to project items
+        document.querySelectorAll('.project-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Only trigger if not clicking on buttons
+                if (!e.target.closest('.project-btn')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                }
+            });
+        });
+
+        // Initialize with a subtle entrance animation
+        window.addEventListener('load', () => {
+            const wrapper = document.querySelector('.card-wrapper');
+            wrapper.style.opacity = '0';
+            wrapper.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                wrapper.style.transition = 'all 0.6s ease';
+                wrapper.style.opacity = '1';
+                wrapper.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // Remove keyboard navigation that might cause unwanted flips
+        // Only keep ESC key for closing the card when flipped
+        document.addEventListener('keydown', (e) => {
+            const card = document.getElementById('profileCard');
+            if (e.key === 'Escape' && card.classList.contains('flipped')) {
+                flipCard(e);
+            }
+        });
+
+        // Remove automatic touch/swipe support that might cause unwanted flips
+        // Users will only be able to flip using the buttons
+    </script>
+</body>
+</html>
